@@ -1,1 +1,29 @@
 {% extends 'base.html' %}
+
+
+{% block body %}
+    {% block sms %}
+        {% if sms%}
+            <div class="alert alert-success" role="alert">
+                {{ sms }}
+            </div>
+        {% endif %}
+    {% endblock %}
+ <hr>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul>
+    {% for message in messages %}
+        <li>{{ message }} </li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
+{% endblock %}
+
+
+
+{% block script %}
+
+{% endblock %}

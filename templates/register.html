@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Регистрация
+{% endblock %}
+
+
+{% block body %}
+{% if form.password_again.errors%}
+    <div class="alert alert-danger" role="alert">
+  {% for error in form.password_again.errors %}
+                {{ error }}
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="container">
+        <form action="" method="post" name="register">
+        {{ form.hidden_tag() }}
+
+        <p>
+            {{ form.username (class="form-control", list="usersList", placeholder="Выберите пользователя") }}
+            <datalist id="usersList">
+                        {% for user in users %}
+                            <option value="{{ user.name }}">{{ user.id }}</option>
+                        {% endfor %}
+            </datalist>
+        </p>
+        <p>
+            {{ form.login(class="form-control", placeholder="Введите логин") }}
+        </p>
+        <p>
+            {{ form.password(class="form-control", placeholder="Придумайте пароль") }}
+        </p>
+        <p>
+            {{ form.password_again(class="form-control", placeholder="Повторите пароль") }}
+
+        </p>
+        <p>
+            {{ form.role(class="form-control", list="roleList", placeholder="Выберите роль пользователя") }}
+            <datalist id="roleList">
+                <option value="Администратор">admin</option>
+                <option value="Техник">technician</option>
+                <option value="Ответственный">responsible</option>
+            </datalist>
+        </p>
+        <p>
+            {{ form.submit(class="btn btn-primary") }}
+        </p>
+
+
+
+        </form>
+</div>
+{% endblock %}

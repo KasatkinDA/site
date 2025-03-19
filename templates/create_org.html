@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+
+<div class="container">
+        <form action="" method="post" name="register">
+        {{ form.hidden_tag() }}
+
+        <p>
+            {{ form.name(class="form-control", placeholder="Введите название") }}
+        </p>
+
+        <p>
+            {{ form.city (class="form-control", list="cities", placeholder="Введите город") }}
+            <datalist id="cities">
+                        {% for city in cities %}
+                            <option value="{{ city.name }}"></option>
+                        {% endfor %}
+            </datalist>
+        </p>
+
+        <p>
+            {{ form.adress(class="form-control", placeholder="Введите адрес") }}
+        </p>
+
+        <p>
+            {{ form.phone1(class="form-control", placeholder="Введите номер телефона") }}
+        </p>
+        <p>
+            {{ form.phone2(class="form-control", placeholder="Введите номер телефона") }}
+        </p>
+        <p>
+            {{ form.phone2(class="form-control", placeholder="Введите номер телефона") }}
+        </p>
+
+        <p>
+            <div class="form-floating">
+                {{ form.koment(class="form-control", placeholder="Введите комментарий", style="height: 100px", id="floatingTextarea2") }}
+                <label for="floatingTextarea2">Комментарии</label>
+            </div>
+
+        </p>
+
+        <p>
+            {{ form.submit(class="btn btn-primary") }}
+        </p>
+
+        </form>
+</div>
+{% endblock %}

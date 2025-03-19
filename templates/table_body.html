@@ -1,0 +1,11 @@
+<tbody>
+    {% for org in organizations %}
+    <tr>
+        <td>{{ org.id }}</td>
+        <td>{{ org.name }}</td>
+        <td>{{ org.city }}</td>
+        <td>{{ org.adress }}</td>
+        <td>{{ org.phone1 }}</td>
+    </tr>
+    {% endfor %}
+</tbody>

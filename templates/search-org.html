@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Найти организацию
+{% endblock %}
+
+
+
+{% block body %}
+    {{ table | safe }}
+{#    #}
+{#<form method="POST" action="/filter">#}
+{#        {{ form.hidden_tag() }}#}
+{#        {{ form.name }}#}
+{#        {{ form.city }}#}
+{#        {{ form.adress }}#}
+{#        {{ form.phone }}#}
+{#        {{ form.submit }}#}
+{#    </form>#}
+{##}
+{#    <table id="myTable">#}
+{#        <thead>#}
+{#            <tr>#}
+{#                <th>Имя</th>#}
+{#                <th>Город</th>#}
+{#                <th>Адрес</th>#}
+{#                <th>Телефон 1</th>#}
+{#                <th>Телефон 2</th>#}
+{#                <th>Телефон 3</th>#}
+{#            </tr>#}
+{#        </thead>#}
+{#        <tbody>#}
+{#            {% for org in organization %}#}
+{#            <tr>#}
+{#                <td>{{ org.name }}</td>#}
+{#                <td>{{ org.city }}</td>#}
+{#                <td>{{ org.adress }}</td>#}
+{#                <td>{{ org.phone1 }}</td>#}
+{#                <td>{{ org.phone2 }}</td>#}
+{#                <td>{{ org.phone3 }}</td>#}
+{#            </tr>#}
+{#            {% endfor %}#}
+{#        </tbody>#}
+{#    </table>#}
+{##}
+{#    <script>#}
+{#        $(document).ready(function() {#}
+{#            $('#myTable').DataTable();#}
+{#        });#}
+{##}
+{#    </script>#}
+
+{% endblock %}
