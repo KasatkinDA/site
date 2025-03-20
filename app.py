@@ -169,7 +169,7 @@ def createOrg():
             db.session.commit()
         return render_template('index.html', sms=f"Организация - {name} добавлена")
 
-    return render_template("create_org.html", form=form, cities=cities, title="Добавить организацию")
+    return render_template("create_org.html", form=form, cities=cities)
 
 
 
