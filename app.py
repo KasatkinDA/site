@@ -1,8 +1,9 @@
 from config import app, render_template, db
 from classes import *
 from flask_login import   login_required, login_user, current_user, logout_user
-from forms import LoginForm, RegisterForm, AddOrganization, FilterOrg, CreateTicket, RegistrationForm
-from flask import  render_template, request, redirect, url_for,  flash, session, jsonify
+from forms import (LoginForm, RegisterForm, AddOrganization, FilterOrg, CreateTicket,
+                   RegistrationForm, EditUserForm, EditOrganizationForm)
+from flask import  render_template, request, redirect, url_for,  flash, session, jsonify, abort
 
 
 
@@ -123,10 +124,35 @@ def editBrigade():
 
 """Модуль организации"""
 
-@app.route('/searchOrg')
+
+@app.route('/search_org', methods=['GET'])
 @login_required
 def search_org():
-    return render_template('search-org.html')
+    # Параметры фильтрации
+    name = request.args.get('name', '').strip()
+    city = request.args.get('city', '').strip()
+    address = request.args.get('address', '').strip()
+    phone = request.args.get('phone', '').strip()
+
+    # Базовый запрос
+    query = Organizations.query
+
+    # Фильтры
+    if name:
+        query = query.filter(Organizations.name.ilike(f'%{name}%'))
+    if city:
+        query = query.filter(Organizations.city.ilike(f'%{city}%'))
+    if address:
+        query = query.filter(Organizations.adress.ilike(f'%{address}%'))  # Исправьте на 'address' если нужно
+    if phone:
+        query = query.filter(
+            (Organizations.phone1.ilike(f'%{phone}%')) |
+            (Organizations.phone2.ilike(f'%{phone}%')) |
+            (Organizations.phone3.ilike(f'%{phone}%'))
+        )
+
+    organizations = query.all()
+    return render_template('search-org.html', organizations=organizations)
 
 
 @app.route('/data')
@@ -138,17 +164,7 @@ def data():
 
     return jsonify([org.to_dict() for org in organizations])
 
-@app.route('/filter', methods=['GET', 'POST'])
-@login_required
-def filter():
-    form = FilterOrg()
-    if form.validate_on_submit():
-        name = form.name.data
-        city = form.city.data
-        adress = form.adress.data
-        phone = form.phone.data
-        organization = Organizations.query.filter_by(name=name, city=city, adress=adress, phone1=phone).all()
-        return render_template('table_body.html', users=users)
+
 
 @app.route('/createOrg', methods=("POST", "GET"))
 @login_required
@@ -227,7 +243,7 @@ def register():
             user = User(
                 login=form.login.data,
                 username=form.username.data,
-                role='user'
+                role='Пользователь'
             )
             user.set_password(form.password.data)
 
@@ -250,6 +266,82 @@ def register():
 
     return render_template('register.html', form=form)
 
+
+@app.route('/edit_user/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def edit_user(user_id):
+    if current_user.role != 'Администратор':
+        abort(403)
+
+    user = User.query.get_or_404(user_id)
+    form = EditUserForm(obj=user)
+    form.team_id.choices = [(t.team_id, t.name) for t in Teams.query.all()]  # Заполняем список бригад
+    form.user_id = user.id
+
+    if form.validate_on_submit():
+        try:
+            user.username = form.username.data
+            user.login = form.login.data
+            user.role = form.role.data
+            user.team_id = form.team_id.data or None
+            user.phone1 = form.phone1.data
+            user.phone2 = form.phone2.data
+            user.ban = "banned" if form.is_banned.data else None  # Сохраняем статус блокировки
+
+            if form.new_password.data:
+                user.set_password(form.new_password.data)
+
+            db.session.commit()
+            flash('Данные обновлены!', 'success')
+            return redirect(url_for('user_list'))
+
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Ошибка: {str(e)}', 'danger')
+
+    # Для чекбокса блокировки
+    form.is_banned.data = bool(user.ban)
+    return render_template('edit_user.html', form=form, user=user)
+
+
+@app.route('/users')
+@login_required
+def user_list():
+    if current_user.role != 'Администратор':
+        abort(403)
+    users = User.query.all()
+    return render_template('user_list.html', users=users)
+
+
+@app.route('/edit_org/<int:org_id>', methods=['GET', 'POST'])
+@login_required
+def edit_org(org_id):
+    # Только администраторы и ответственные
+    if current_user.role != 'Администратор':
+        abort(403)
+
+    org = Organizations.query.get_or_404(org_id)
+    form = EditOrganizationForm(obj=org)
+
+    if form.validate_on_submit():
+        try:
+            org.name = form.name.data
+            org.city = form.city.data
+            org.adress = form.adress.data
+            org.phone1 = form.phone1.data
+            org.phone2 = form.phone2.data
+            org.phone3 = form.phone3.data
+            org.komment = form.komment.data
+
+            db.session.commit()
+            flash('Организация обновлена!', 'success')
+            return redirect(url_for('search_org'))
+
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Ошибка: {str(e)}', 'danger')
+
+    return render_template('edit_org.html', form=form, org=org)
 
 
 

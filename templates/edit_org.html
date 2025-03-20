@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Редактирование организации{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2>Редактирование: {{ org.name }}</h2>
+    
+    <form method="POST">
+        {{ form.csrf_token }}
+        
+        <div class="mb-3">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control") }}
+            {% for error in form.name.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="mb-3">
+            {{ form.city.label(class="form-label") }}
+            {{ form.city(class="form-control") }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.adress.label(class="form-label") }}
+            {{ form.adress(class="form-control") }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.phone1.label(class="form-label") }}
+            {{ form.phone1(class="form-control", placeholder="+7 (XXX) XXX-XX-XX") }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.phone2.label(class="form-label") }}
+            {{ form.phone2(class="form-control", placeholder="Дополнительный номер") }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.phone3.label(class="form-label") }}
+            {{ form.phone3(class="form-control", placeholder="Дополнительный номер") }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.komment.label(class="form-label") }}
+            {{ form.komment(class="form-control", rows=4) }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{{ url_for('search_org') }}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,12 +1,76 @@
 {% extends 'base.html' %}
-
-{% block title %}
-Найти организацию
-{% endblock %}
-
-
+{% block title %}Список организаций{% endblock %}
 
 {% block body %}
-    {{ table | safe }}
+<div class="container mt-4">
+    <h2>Все организации</h2>
 
+    {# Форма фильтрации #}
+    <form method="GET" action="{{ url_for('search_org') }}" class="mb-4">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control"
+                       placeholder="Название"
+                       name="name"
+                       value="{{ request.args.get('name', '') }}">
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control"
+                       placeholder="Город"
+                       name="city"
+                       value="{{ request.args.get('city', '') }}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> Найти
+                </button>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ url_for('search_org') }}"
+                   class="btn btn-outline-secondary w-100">
+                    Сбросить
+                </a>
+            </div>
+        </div>
+    </form>
+
+    {# Таблица с организациями #}
+    <div class="table-responsive">
+    <table class="table table-hover table-sm">
+        <thead class="table-light">
+            <tr>
+                <th>Название</th>
+                <th class="d-none d-md-table-cell">Город</th>
+                <th>Адрес</th>
+                <th>Телефон</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for org in organizations %}
+            <tr>
+                <td>{{ org.name }}</td>
+                <td class="d-none d-md-table-cell">{{ org.city }}</td>
+                <td>{{ org.adress }}</td>
+                <td>
+                    {{ org.phone1 }}
+                    {% if org.phone2 %}<br>{{ org.phone2 }}{% endif %}
+                    {% if org.phone3 %}<br>{{ org.phone3 }}{% endif %}
+                </td>
+                <td>
+                    <a href="{{ url_for('edit_org', org_id=org.org_id) }}"
+                       class="btn btn-sm btn-warning">
+                       <i class="bi bi-pencil"></i>
+                    </a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="text-center">Ничего не найдено</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</div>
 {% endblock %}

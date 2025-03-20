@@ -1,8 +1,16 @@
 from flask_wtf import FlaskForm
 from typing_extensions import ReadOnly
-from wtforms import StringField, SubmitField, TextAreaField,  BooleanField, PasswordField, TelField
-from wtforms.validators import DataRequired, Email, EqualTo, Disabled
-
+from wtforms import (
+    StringField,
+    SubmitField,
+    PasswordField,
+    TelField,
+    TextAreaField,
+    BooleanField,
+    SelectField
+)
+from wtforms.validators import DataRequired, Email, EqualTo, Disabled, Optional, ValidationError, Length
+from classes import User
 
 class RegistrationForm(FlaskForm):
     username = StringField('Имя', validators=[DataRequired()])
@@ -58,3 +66,43 @@ class CreateTicket(FlaskForm):
     submit = SubmitField("Создать")
 
 
+class EditUserForm(FlaskForm):
+    username = StringField('ФИО', validators=[DataRequired()])
+    login = StringField('Логин', validators=[DataRequired()])
+    role = SelectField(
+        'Роль',
+        choices=[
+            ('user', 'Пользователь'),
+            ('admin', 'Администратор'),
+            ('technician', 'Техник'),
+            ('responsible', 'Ответственный')
+        ],
+        validators=[DataRequired()]
+    )
+    team_id = SelectField(  # Если есть список бригад
+        'Бригада',
+        coerce=int,
+        choices=[],
+        validators=[Optional()]
+    )
+    phone1 = StringField('Телефон 1', validators=[Optional(), Length(max=15)])
+    phone2 = StringField('Телефон 2', validators=[Optional(), Length(max=15)])
+    new_password = PasswordField('Новый пароль', validators=[Optional()])
+    confirm_password = PasswordField('Повторите пароль', validators=[
+        EqualTo('new_password', message='Пароли должны совпадать')
+    ])
+    is_banned = BooleanField('Заблокировать пользователя')
+    submit = SubmitField('Сохранить')
+
+
+from wtforms.validators import Optional, Length
+
+class EditOrganizationForm(FlaskForm):
+    name = StringField('Название', validators=[DataRequired()])
+    city = StringField('Город', validators=[DataRequired()])
+    adress = StringField('Адрес', validators=[DataRequired()])
+    phone1 = StringField('Телефон 1', validators=[Optional(), Length(max=15)])
+    phone2 = StringField('Телефон 2', validators=[Optional(), Length(max=15)])
+    phone3 = StringField('Телефон 3', validators=[Optional(), Length(max=15)])
+    komment = TextAreaField('Комментарий', validators=[Optional()])
+    submit = SubmitField('Сохранить изменения')
