@@ -4,12 +4,22 @@ from wtforms import StringField, SubmitField, TextAreaField,  BooleanField, Pass
 from wtforms.validators import DataRequired, Email, EqualTo, Disabled
 
 
+class RegistrationForm(FlaskForm):
+    username = StringField('Имя', validators=[DataRequired()])
+    login = StringField('Логин', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    password_repeat = PasswordField(
+        'Повторите пароль',
+        validators=[DataRequired(), EqualTo('password')]
+    )
+    submit = SubmitField('Зарегистрироваться')
+
 class LoginForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
     password = PasswordField("Password", validators=[DataRequired()])
     remember = BooleanField("Remember Me")
     submit = SubmitField("Войти")
-    regist = SubmitField("Регистрация")
+    registration = SubmitField("Регистрация")
 
 class RegisterForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired()])
@@ -47,3 +57,5 @@ class CreateTicket(FlaskForm):
     komment = TextAreaField("Коментарий")
     new_komment = TextAreaField("Новый комментарий")
     submit = SubmitField("Создать")
+
+

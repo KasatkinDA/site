@@ -245,6 +245,9 @@
             </div>
 
         {% endif %}
+        {% if session['role'] == 'user' %}
+        {% endif %}
+
         </div>
     <a href="logout">Выйти</a>
         </div>

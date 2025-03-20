@@ -1,7 +1,7 @@
 from config import app, render_template, db
 from classes import *
 from flask_login import   login_required, login_user, current_user, logout_user
-from forms import LoginForm, RegisterForm, AddOrganization, FilterOrg, CreateTicket
+from forms import LoginForm, RegisterForm, AddOrganization, FilterOrg, CreateTicket, RegistrationForm
 from flask import  render_template, request, redirect, url_for,  flash, session, jsonify
 
 
@@ -206,6 +206,46 @@ def login():
     return render_template('login.html', form=form)
 
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    form = RegistrationForm()  # Убедитесь в скобках!
+
+    if form.validate_on_submit():
+        try:
+            # Проверка уникальности логина
+            existing_user = User.query.filter_by(login=form.username.data).first()
+            if existing_user:
+                flash('Логин уже занят', 'error')
+                return render_template('register.html', form=form)
+
+            user = User(
+                login=form.login.data,
+                username=form.username.data,
+                role='user'
+            )
+            user.set_password(form.password.data)
+
+
+            db.session.add(user)
+            db.session.commit()
+
+            flash('Регистрация успешна! Теперь войдите', 'success')
+            return redirect(url_for('login'))  # Редирект после успеха
+
+        except Exception as e:
+            db.session.rollback()
+            app.logger.error(f'Ошибка регистрации: {str(e)}')  # Логируем ошибку
+            flash('Ошибка базы данных', 'error')
+
+    # Добавляем вывод ошибок валидации
+    for field, errors in form.errors.items():
+        for error in errors:
+            app.logger.warning(f'Ошибка в поле {field}: {error}')
+
+    return render_template('register.html', form=form)
 
 
 
