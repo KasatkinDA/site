@@ -33,9 +33,9 @@
         <div class="offcanvas-header">
             {# Верхний блок менюшки #}
             <div class="">
-                <span class="fs-4 fw-semibold ">{{session['name']}}</span>
+                <span class="fs-4 fw-semibold">{{ session.get('name', '') | e }}</span>
                 <hr>
-                <span class="fs-6 fst-italic">{{session['role']}}</span>
+                <span class="fs-6 fst-italic">{{ session.get('role', '') | e }}</span>
             </div>
                 <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
         </div>

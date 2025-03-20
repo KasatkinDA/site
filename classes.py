@@ -13,11 +13,11 @@ def load_user(user_id):
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True) #id пользователя в базе
-    user_id = db.Column(db.String(50), unique=True) #Telegram chat_id пользователя
+    user_id = db.Column(db.String(50), unique=True, nullable=True) #Telegram chat_id пользователя
     username = db.Column(db.String(50)) #Имя и фамилия
     role = db.Column(db.String(15)) #Роль в программе
-    team_id = db.Column(db.Integer) #Id бригады если он техник
-    phone1 = db.Column(db.String(15)) #Телефон юзера номер 1
+    team_id = db.Column(db.Integer, nullable=True) #Id бригады если он техник
+    phone1 = db.Column(db.String(15), default='') #Телефон юзера номер 1
     phone2 = db.Column(db.String(15)) #Телефон юзера номер 2. Необязателен
     login = db.Column(db.String(15)) #Логин юзера
     password_hash = db.Column(db.String(300)) #Пароль в хэше юзера
@@ -65,7 +65,7 @@ class Teams(db.Model):
         return f"<teams {self.team_id}>"
 
 
-class Contact_person(db.Model):
+class ContactPerson(db.Model):
     org_id = db.Column(db.Integer, primary_key=True) #ID огранизации из таблицы "Organizations"
     contact_person = db.Column(db.Integer) #ID пользователя из таблицы "Users"
 

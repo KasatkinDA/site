@@ -23,13 +23,14 @@ def registration():
     """Тут должна быть форма по которой мы выдаем юзеру логин и пароль"""
     form = RegisterForm()
     if form.validate_on_submit():
-        username = form.username.data
-        login = form.login.data
-        password = form.password.data
-        role = form.role.data
-        password = generate_password_hash(password=password)
+
         # user_model = db.session.query(Temp_user).filter_by(name=username).first()
-        user = User(username=username, role=role, login=login, password_hash=password)
+        user = User(
+            username=form.username.data,
+            role=form.role.data,
+            login=form.login.data)
+        user.set_password(form.password.data)
+
         db.session.add(user)
         # db.session.delete(user_model)
         db.session.commit()
@@ -167,6 +168,8 @@ def createOrg():
             organization = Organizations(name=name, city=city, adress=adress, phone1=phone1, phone2=phone2, phone3=phone3, komment=komment)
             db.session.add(organization)
             db.session.commit()
+        else:
+            flash('Исправьте ошибки в форме', 'error')
         return render_template('index.html', sms=f"Организация - {name} добавлена")
 
     return render_template("create_org.html", form=form, cities=cities)
